@@ -1,0 +1,123 @@
+﻿@page "/employee/create"
+@using HRApp.Shared.Entities
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@inject HttpClient _httpClient
+@inject HttpClient http
+@inject HttpClient Http
+@inject NavigationManager uriHelper
+@inject IJSRuntime js
+
+<h3>Create Employee</h3>
+
+
+<EditForm Model="@employees" OnValidSubmit="OnValidSubmit">
+<DataAnnotationsValidator/>
+<MudGrid>
+    <MudItem xs="12" sm="6">
+        <MudCard>
+            <MudCardContent>
+                @*<MudTextField Label="Department Name" HelperText="Max. 8 characters"
+                              @bind-Value="employees.DepartmentId" For="@(() => employees.DepartmentId)"/>*@
+                
+                 <MudSelect  @bind-Value="employees.DepartmentId" Label="Department" AnchorOrigin="Origin.BottomCenter">
+                    @foreach (var item in departments)
+                    {
+                        <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+                    }
+                </MudSelect>
+                @*<select @bind="@employees.DepartmentId" class="form-control">
+                    @foreach (var department in departments)
+                    {
+                    <option value="@department.Id">@department.Name</option>
+                    }
+                </select>*@
+                <MudTextField Label="Employee Name" HelperText="Max. 8 characters"
+                              @bind-Value="employees.Name" For="@(() => employees.Name)"/>
+                <MudTextField Label="Address" HelperText="Max. 8 characters"
+                              @bind-Value="employees.Address" For="@(() => employees.Address)"/>
+                <MudTextField Label="Email" HelperText="Max. 8 characters"
+                              @bind-Value="employees.Email" For="@(() => employees.Email)"/>
+                <MudTextField Label="Phone" HelperText="Max. 8 characters"
+                              @bind-Value="employees.Phone" For="@(() => employees.Phone)"/>
+                <MudTextField Label="Salary" HelperText="Max. 8 characters"
+                              @bind-Value="employees.Salary" For="@(() => employees.Salary)"/>
+            </MudCardContent>
+            
+        </MudCard>
+    </MudItem>
+    
+    <MudItem xs="12" sm="6">
+        <MudCard>
+            <MudCardContent>
+                @*<MudTextField Label="Designation Name" HelperText="Max. 8 characters"
+                              @bind-Value="employees.DesignationId" For="@(() => employees.DesignationId)"/>*@
+                              <MudSelect Margin="Margin.Dense" T="int" @bind-Value="employees.DesignationId" Label="Designation" Variant="Variant.Text">
+                                    @foreach(var item in designations)
+                                    {
+                                        <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+                                    }
+                                </MudSelect>
+                <MudDatePicker Label="Editable with Placeholder" Editable="true" @bind-Date="employees.HireDate" Placeholder="Select Date" />
+                <MudTextField Label="Gender" HelperText="Max. 8 characters"
+                              @bind-Value="employees.Gender" For="@(() => employees.Gender)"/>
+               <InputSelect @bind-Value="employees.Gender">
+                    @foreach (var gender in Enum.GetValues(typeof(Gender)))
+                    {
+                        <option value="@gender">@gender</option>
+                    }
+                </InputSelect>
+            </MudCardContent>
+
+            <MudCardActions>
+                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" OnClick="CreateEmployee">Create</MudButton>
+            </MudCardActions>
+        </MudCard>
+    </MudItem>
+    
+</MudGrid>
+</EditForm>
+
+
+@code {
+    DateTime? date = DateTime.Today;
+    bool success;
+    List<Department> departments = new();
+    List<Designation> designations = new();
+    Employees employees = new Employees();
+
+    protected override async Task OnInitializedAsync()
+    {
+                try
+                {
+                    departments = await Http.GetFromJsonAsync<List<Department>>("api/department");
+                    designations = await Http.GetFromJsonAsync<List<Designation>>("api/designation");
+                }
+                catch (AccessTokenNotAvailableException exception)
+                {
+                exception.Redirect();
+       }
+
+}
+    public async Task CreateEmployee()
+    {
+        await http.PostAsJsonAsync("api/employees", employees);
+        uriHelper.NavigateTo("employee");
+    }
+
+    private void OnValidSubmit(EditContext context)
+    {
+        success = true;
+        StateHasChanged();
+    }
+
+    //public async Task DepartmentDropdown()
+    //{
+    //    var result = await http.GetFromJsonAsync<List<Department>>("api/employees/department");
+    //    if(result != null)
+    //    {
+    //        departments = result;
+    //    }
+    //}
+    
+}

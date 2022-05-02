@@ -1,0 +1,60 @@
+﻿@page "/designation"
+@using HRApp.Shared.Entities
+@inject HttpClient client
+@inject NavigationManager uriHelper
+@inject IJSRuntime js
+<h3>Designation</h3>
+
+
+<MudButton Variant="Variant.Outlined" Color="Color.Primary" Link="/designation/create" >Create</MudButton>
+<br>
+<MudTable Items="@designations.Take(10)" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading" LoadingProgressColor="Color.Info">
+    <HeaderContent>
+        @*<MudTh>SN</MudTh>*@
+        <MudTh>Designation </MudTh>
+        <MudTh>Department </MudTh>
+        <MudTh>Description </MudTh>
+        <MudTh>Actions </MudTh>
+    </HeaderContent>
+    <RowTemplate>
+       @* <MudTd>@sn++</MudTd>*@
+       <MudTd DataLabel="Designation">@context.Name</MudTd>
+       <MudTd DataLabel="Department">@context.DepartmentId</MudTd>
+       <MudTd DataLabel="Description">@context.Description</MudTd>
+        <MudTd DataLabel="" Class="justify-end">
+            <a class="btn btn-success " href="designation/edit/@context.Id">Edit</a>
+            @*<MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Edit" Color="Color.Success" href="/user/edit/@context.Id"></MudButton>*@
+            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error"@onclick="@(() => Delete(@context.Id))"></MudButton>
+
+            @* <MudFab @onclick="@(()=>Edit(@context.Id))" Color="Color.Primary" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" IconSize="Size.Small" />
+            <MudFab @onclick="@(()=>Delete(@context.Id))" Color="Color.Secondary" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" IconSize="Size.Small" />
+*@
+        </MudTd>
+    </RowTemplate>
+</MudTable>
+
+<MudSwitch @bind-Checked="_hidePosition">Hide <b>position</b> when Breakpoint=Xs</MudSwitch>
+<MudSwitch @bind-Checked="_loading">Show Loading</MudSwitch>
+@code {
+    int sn =0;
+    private bool _hidePosition;
+    private bool _loading;
+    private IEnumerable<Designation> designations = new List<Designation>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        designations = await client.GetFromJsonAsync<List<Designation>>("api/designation");
+    }
+    
+    async Task Delete(int userId)
+    {
+        
+        var deg = designations.First(x => x.Id == userId);
+        if (await js.InvokeAsync<bool>("confirm", $"Do you want to delete {deg.Name}'s ({deg.Id}) Record?"))
+        {
+            await client.DeleteAsync($"api/designation/{userId}");
+            uriHelper.NavigateTo("designation");
+            await OnInitializedAsync();
+        }
+    }
+}

@@ -1,0 +1,73 @@
+﻿@page "/employee/edit/{employeeId:int}"
+@using HRApp.Shared.Entities
+@inject HttpClient http
+@inject NavigationManager uriHelper
+@inject IJSRuntime js
+
+<h3>Edit Employee</h3>
+<EditForm Model="@employees" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator/>
+    <MudGrid>
+        <MudItem xs="12" sm="6">
+        <MudCard>
+            <MudCardContent>
+                <MudTextField Label="Department Name" HelperText="Max. 8 characters"
+                              @bind-Value="employees.DepartmentId" For="@(() => employees.DepartmentId)"/>
+                <MudTextField Label="Employee Name" HelperText="Max. 8 characters"
+                              @bind-Value="employees.Name" For="@(() => employees.Name)"/>
+                <MudTextField Label="Address" HelperText="Max. 8 characters"
+                              @bind-Value="employees.Address" For="@(() => employees.Address)"/>
+                <MudTextField Label="Email" HelperText="Max. 8 characters"
+                              @bind-Value="employees.Email" For="@(() => employees.Email)"/>
+                <MudTextField Label="Phone" HelperText="Max. 8 characters"
+                              @bind-Value="employees.Phone" For="@(() => employees.Phone)"/>
+                <MudTextField Label="Salary" HelperText="Max. 8 characters"
+                              @bind-Value="employees.Salary" For="@(() => employees.Salary)"/>
+            </MudCardContent>
+            
+        </MudCard>
+    </MudItem>
+    
+    <MudItem xs="12" sm="6">
+        <MudCard>
+            <MudCardContent>
+                <MudTextField Label="Designation Name" HelperText="Max. 8 characters"
+                              @bind-Value="employees.DesignationId" For="@(() => employees.DesignationId)"/>
+                <MudDatePicker Label="Editable with Placeholder" Editable="true" @bind-Date="employees.HireDate" Placeholder="Select Date" />
+                <MudTextField Label="Gender" HelperText="Max. 8 characters"
+                              @bind-Value="employees.Gender" For="@(() => employees.Gender)"/>
+               
+            </MudCardContent>
+
+            <MudCardActions>
+                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" OnClick="EditEmployee">Create</MudButton>
+            </MudCardActions>
+        </MudCard>
+    </MudItem>
+    </MudGrid>
+</EditForm>
+
+
+@code {
+    
+    bool success;
+    [Parameter] public int employeeId { get; set; }
+    Employees employees = new Employees();
+    protected async override Task OnParametersSetAsync()
+    {
+        employees = await http.GetFromJsonAsync<Employees>($"api/employees/{employeeId}");
+    }
+    async Task EditEmployee()
+    {
+        await http.PutAsJsonAsync("api/employees", employees);
+        await js.InvokeVoidAsync("alert", $"Updated Successfully!");
+        uriHelper.NavigateTo("employee");
+    }
+    
+    private void OnValidSubmit(EditContext context)
+    {
+        success = true;
+        StateHasChanged();
+    }
+
+}
