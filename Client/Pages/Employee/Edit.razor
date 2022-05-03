@@ -4,58 +4,76 @@
 @inject NavigationManager uriHelper
 @inject IJSRuntime js
 
-<h3>Edit Employee</h3>
-<EditForm Model="@employees" OnValidSubmit="OnValidSubmit">
-    <DataAnnotationsValidator/>
-    <MudGrid>
-        <MudItem xs="12" sm="6">
-        <MudCard>
-            <MudCardContent>
-                <MudTextField Label="Department Name" HelperText="Max. 8 characters"
-                              @bind-Value="employees.DepartmentId" For="@(() => employees.DepartmentId)"/>
-                <MudTextField Label="Employee Name" HelperText="Max. 8 characters"
-                              @bind-Value="employees.Name" For="@(() => employees.Name)"/>
-                <MudTextField Label="Address" HelperText="Max. 8 characters"
-                              @bind-Value="employees.Address" For="@(() => employees.Address)"/>
-                <MudTextField Label="Email" HelperText="Max. 8 characters"
-                              @bind-Value="employees.Email" For="@(() => employees.Email)"/>
-                <MudTextField Label="Phone" HelperText="Max. 8 characters"
-                              @bind-Value="employees.Phone" For="@(() => employees.Phone)"/>
-                <MudTextField Label="Salary" HelperText="Max. 8 characters"
-                              @bind-Value="employees.Salary" For="@(() => employees.Salary)"/>
-            </MudCardContent>
-            
-        </MudCard>
-    </MudItem>
-    
-    <MudItem xs="12" sm="6">
-        <MudCard>
-            <MudCardContent>
-                <MudTextField Label="Designation Name" HelperText="Max. 8 characters"
-                              @bind-Value="employees.DesignationId" For="@(() => employees.DesignationId)"/>
-                <MudDatePicker Label="Editable with Placeholder" Editable="true" @bind-Date="employees.HireDate" Placeholder="Select Date" />
-                <MudTextField Label="Gender" HelperText="Max. 8 characters"
-                              @bind-Value="employees.Gender" For="@(() => employees.Gender)"/>
-               
-            </MudCardContent>
-
-            <MudCardActions>
-                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" OnClick="EditEmployee">Create</MudButton>
-            </MudCardActions>
-        </MudCard>
-    </MudItem>
-    </MudGrid>
-</EditForm>
+<MudCard Class="mx-5 my-5">
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h6">Create Employee</MudText>
+        </CardHeaderContent>
+    </MudCardHeader>
+    <MuForm class="d-flex">
+        <MudGrid>
+            <MudItem xs="12" sm="6" >
+                <MudTextField Margin="Margin.Dense"style="height:41px" @bind-Value="employees.Name" For="@(() => employees.Name)" Label="Name" Variant="Variant.Outlined"></MudTextField>
+            </MudItem>
+            <MudItem xs="6" sm="3">
+                <MudSelect Margin="Margin.Dense" T="int" @bind-Value="employees.DepartmentId" Label="Department" Variant="Variant.Outlined">
+                    @foreach (var item in departments)
+                    {
+                        <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="6" sm="3">
+                <MudSelect Margin="Margin.Dense" T="int" @bind-Value="employees.DesignationId" Label="Designation" Variant="Variant.Outlined">
+                    @foreach(var item in designations)
+                    {
+                        <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="12" sm="6" >
+                <MudTextField Margin="Margin.Dense"style="height:41px" @bind-Value="employees.Address" For="@(() => employees.Address)" Label="Address" Variant="Variant.Outlined"></MudTextField>
+            </MudItem>
+            <MudItem xs="6" sm="3">
+                <MudSelect Margin="Margin.Dense"  @bind-Value="employees.Gender" For="@(() => employees.Gender)" Label="Gender" Variant="Variant.Outlined">
+                    @foreach(var item in Enum.GetValues(typeof(Gender)))
+                    {
+                        <MudSelectItem Value="@item">@item</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="6" sm="3">
+                <MudDatePicker Label="Editable with Placeholder" Editable="true" @bind-Date="employees.HireDate" Placeholder="Select Date" Variant="Variant.Outlined"/>
+            </MudItem>
+            <MudItem  xs="12" sm="6" >
+                <MudTextField Margin="Margin.Dense"  style="height:41px" @bind-Value="employees.Email" For="@(() => employees.Email)" Label="Email" Variant="Variant.Outlined"></MudTextField>
+            </MudItem>
+            <MudItem  xs="6" sm="3" >
+                <MudTextField Margin="Margin.Dense"  style="height:41px" T="string" @bind-Value="employees.Phone" For="@(() => employees.Phone)" Label="Phone" Variant="Variant.Outlined"></MudTextField>
+            </MudItem>
+            <MudItem  xs="6" sm="3" >
+                <MudTextField Margin="Margin.Dense"  style="height:41px" T="decimal" @bind-Value="employees.Salary" For="@(() => employees.Salary)" Label="Salary" Variant="Variant.Outlined"></MudTextField>
+            </MudItem>
+        </MudGrid>
+    </MuForm>
+    <div class="d-flex justify-space-between my-3 ">
+        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" OnClick="EditEmployee">Update</MudButton>
+    </div>
+</MudCard>
 
 
 @code {
     
     bool success;
     [Parameter] public int employeeId { get; set; }
+    List<Department> departments = new();
+    List<Designation> designations = new();
     Employees employees = new Employees();
     protected async override Task OnParametersSetAsync()
     {
         employees = await http.GetFromJsonAsync<Employees>($"api/employees/{employeeId}");
+        departments = await http.GetFromJsonAsync<List<Department>>("api/department");
+        designations = await http.GetFromJsonAsync<List<Designation>>("api/designation");
     }
     async Task EditEmployee()
     {

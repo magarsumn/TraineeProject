@@ -3,9 +3,13 @@
 @inject HttpClient client
 @inject NavigationManager uriHelper
 @inject IJSRuntime js
-<h3>Departments</h3>
 
-
+<MudCard Class="mx-5 my-5">
+    <MudCardHeader>
+    <CardHeaderContent>
+        <MudText Typo="Typo.h6">Employees List</MudText>
+    </CardHeaderContent>
+</MudCardHeader>
 <MudButton Variant="Variant.Outlined" Color="Color.Primary" Link="/employee/create" >Create</MudButton>
 <br>
 <MudTable Items="@employees.Take(10)" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading" LoadingProgressColor="Color.Info">
@@ -39,6 +43,8 @@
 
 <MudSwitch @bind-Checked="_hidePosition">Hide <b>position</b> when Breakpoint=Xs</MudSwitch>
 <MudSwitch @bind-Checked="_loading">Show Loading</MudSwitch>
+</MudCard>
+
 @code { 
     private bool _hidePosition;
     private bool _loading;

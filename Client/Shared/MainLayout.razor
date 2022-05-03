@@ -6,9 +6,8 @@
     <MudAppBar>
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         HRApp
-        <div class="top-row auth align-end">
+        <div class="top-row bg-transparent text-white d-flex justify-space-between  ">
             <LoginDisplay />
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
         </div>
     </MudAppBar>
     <MudDrawer @bind-Open="@_drawerOpen">
