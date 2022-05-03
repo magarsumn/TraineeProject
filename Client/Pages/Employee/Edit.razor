@@ -4,12 +4,8 @@
 @inject NavigationManager uriHelper
 @inject IJSRuntime js
 
-<MudCard Class="mx-5 my-5">
-    <MudCardHeader>
-        <CardHeaderContent>
-            <MudText Typo="Typo.h6">Create Employee</MudText>
-        </CardHeaderContent>
-    </MudCardHeader>
+
+   <h3>Edit Employee</h3>
     <MuForm class="d-flex">
         <MudGrid>
             <MudItem xs="12" sm="6" >
@@ -36,7 +32,7 @@
             </MudItem>
             <MudItem xs="6" sm="3">
                 <MudSelect Margin="Margin.Dense"  @bind-Value="employees.Gender" For="@(() => employees.Gender)" Label="Gender" Variant="Variant.Outlined">
-                    @foreach(var item in Enum.GetValues(typeof(Gender)))
+                    @foreach(var item in Enum.GetValues(typeof(Sex)))
                     {
                         <MudSelectItem Value="@item">@item</MudSelectItem>
                     }
@@ -59,7 +55,7 @@
     <div class="d-flex justify-space-between my-3 ">
         <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" OnClick="EditEmployee">Update</MudButton>
     </div>
-</MudCard>
+
 
 
 @code {

@@ -13,5 +13,10 @@ namespace HRApp.Server.Repository
         public Repository(ApplicationDbContext context) : base(context)
         {
         }
+
+        public IEnumerable<object> GroupBy(Func<object, object> p)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

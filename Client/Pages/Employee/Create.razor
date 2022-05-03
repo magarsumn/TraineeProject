@@ -1,67 +1,81 @@
 ﻿@page "/employee/create"
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-@inject HttpClient _httpClient
-@inject HttpClient http
+@using System.ComponentModel.DataAnnotations
+@using HRApp.Shared.Entities
 @inject HttpClient Http
 @inject NavigationManager uriHelper
 @inject IJSRuntime js
 
-<MudCard Class="mx-5 my-5">
-    <MudCardHeader>
-        <CardHeaderContent>
-            <MudText Typo="Typo.h6">Create Employee</MudText>
-        </CardHeaderContent>
-    </MudCardHeader>
-    <MuForm class="d-flex">
-        <MudGrid>
-            <MudItem xs="12" sm="6" >
-                <MudTextField Margin="Margin.Dense"style="height:41px" @bind-Value="employees.Name" For="@(() => employees.Name)" Label="Name" Variant="Variant.Outlined"></MudTextField>
-            </MudItem>
-            <MudItem xs="6" sm="3">
-                <MudSelect Margin="Margin.Dense" T="int" @bind-Value="employees.DepartmentId" Label="Department" Variant="Variant.Outlined">
-                    @foreach (var item in departments)
+
+<h3>Create Employee</h3>
+<MuForm class="d-flex">
+    <MudGrid>
+        <MudItem xs="12" sm="6">
+            <MudTextField Margin="Margin.Dense" style="height:41px" @bind-Value="employees.Name" For="@(() => employees.Name)" Label="Name" Variant="Variant.Outlined"></MudTextField>
+        </MudItem>
+        <MudItem xs="6" sm="3">
+            <MudSelect Margin="Margin.Dense" T="int" @bind-Value="employees.DepartmentId" Label="Department" Variant="Variant.Outlined">
+                <MudSelectItem Value="0">--Select Department--</MudSelectItem>
+                @foreach (var item in departments)
+                {
+                    <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
+        <MudItem xs="6" sm="3">
+            <MudSelect Margin="Margin.Dense" T="int" @bind-Value="employees.DesignationId" Label="Designation" Variant="Variant.Outlined">
+                <MudSelectItem Value="0">--Select Designation--</MudSelectItem>
+                @foreach (var item in designations)
+                {
+                    <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            <MudTextField Margin="Margin.Dense" style="height:41px" @bind-Value="employees.Address" For="@(() => employees.Address)" Label="Address" Variant="Variant.Outlined"></MudTextField>
+        </MudItem>
+        @* <MudItem xs="6" sm="3">
+            <MudSelect Margin="Margin.Dense"  @bind-Value="employees.Gender" Label="Gender" Variant="Variant.Outlined">
+            <MudSelectItem Value="0">--Select Gender--</MudSelectItem>
+            @*<MudSelectItem Value="@("Tyrannosaur")" />
+            <MudSelectItem Value="@("Mike Rex")" />
+            @foreach(var item in Enum.GetValues(typeof(Sex)))
+            {
+            <MudSelectItem Value="@item">@item</MudSelectItem>
+            }
+            </MudSelect>
+            </MudItem>*@
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="Sex"> Gender *</label>
+                <select @bind="@employees.Gender" class="form-control">
+                    @foreach (var gender in Enum.GetValues(typeof(Sex)))
                     {
-                        <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+                        <option value="@gender">@gender</option>
                     }
-                </MudSelect>
-            </MudItem>
-            <MudItem xs="6" sm="3">
-                <MudSelect Margin="Margin.Dense" T="int" @bind-Value="employees.DesignationId" Label="Designation" Variant="Variant.Outlined">
-                    @foreach(var item in designations)
-                    {
-                        <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
-                    }
-                </MudSelect>
-            </MudItem>
-            <MudItem xs="12" sm="6" >
-                <MudTextField Margin="Margin.Dense"style="height:41px" @bind-Value="employees.Address" For="@(() => employees.Address)" Label="Address" Variant="Variant.Outlined"></MudTextField>
-            </MudItem>
-            <MudItem xs="6" sm="3">
-                <MudSelect Margin="Margin.Dense"  @bind-Value="employees.Gender" For="@(() => employees.Gender)" Label="Gender" Variant="Variant.Outlined">
-                    @foreach(var item in Enum.GetValues(typeof(Gender)))
-                    {
-                        <MudSelectItem Value="@item">@item</MudSelectItem>
-                    }
-                </MudSelect>
-            </MudItem>
-            <MudItem xs="6" sm="3">
-                <MudDatePicker Label="Editable with Placeholder" Editable="true" @bind-Date="employees.HireDate" Placeholder="Select Date" Variant="Variant.Outlined"/>
-            </MudItem>
-            <MudItem  xs="12" sm="6" >
-                <MudTextField Margin="Margin.Dense"  style="height:41px" @bind-Value="employees.Email" For="@(() => employees.Email)" Label="Email" Variant="Variant.Outlined"></MudTextField>
-            </MudItem>
-            <MudItem  xs="6" sm="3" >
-                <MudTextField Margin="Margin.Dense"  style="height:41px" T="string" @bind-Value="employees.Phone" For="@(() => employees.Phone)" Label="Phone" Variant="Variant.Outlined"></MudTextField>
-            </MudItem>
-            <MudItem  xs="6" sm="3" >
-                <MudTextField Margin="Margin.Dense"  style="height:41px" T="decimal" @bind-Value="employees.Salary" For="@(() => employees.Salary)" Label="Salary" Variant="Variant.Outlined"></MudTextField>
-            </MudItem>
-        </MudGrid>
-    </MuForm>
-    <div class="d-flex justify-space-between my-3 ">
-        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" OnClick="CreateEmployee">Save</MudButton>
-    </div>
-</MudCard>
+                </select>
+            </div>
+        </div>
+        <MudItem xs="6" sm="3">
+            <MudDatePicker Label="Editable with Placeholder" Editable="true" @bind-Date="employees.HireDate" Placeholder="Select Date" Variant="Variant.Outlined" />
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            <MudTextField Margin="Margin.Dense" style="height:41px" @bind-Value="employees.Email" For="@(() => employees.Email)" Label="Email" Variant="Variant.Outlined"></MudTextField>
+        </MudItem>
+        <MudItem xs="6" sm="3">
+            <MudTextField Margin="Margin.Dense" style="height:41px" T="string" @bind-Value="employees.Phone" For="@(() => employees.Phone)" Label="Phone" Variant="Variant.Outlined"></MudTextField>
+        </MudItem>
+        <MudItem xs="6" sm="3">
+            <MudTextField Margin="Margin.Dense" style="height:41px" T="decimal" @bind-Value="employees.Salary" For="@(() => employees.Salary)" Label="Salary" Variant="Variant.Outlined"></MudTextField>
+        </MudItem>
+    </MudGrid>
+</MuForm>
+<br />
+<br />
+<MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" OnClick="CreateEmployee">Save</MudButton>
+
+<MudButton ButtonType="ButtonType.Submit" Variant="Variant.Outlined" Color="Color.Primary" OnClick="Cancel">Cancel</MudButton>
+
 
 
 @code {
@@ -73,20 +87,20 @@
 
     protected override async Task OnInitializedAsync()
     {
-                try
-                {
-                    departments = await Http.GetFromJsonAsync<List<Department>>("api/department");
-                    designations = await Http.GetFromJsonAsync<List<Designation>>("api/designation");
-                }
-                catch (AccessTokenNotAvailableException exception)
-                {
-                exception.Redirect();
-       }
+        try
+        {
+            departments = await Http.GetFromJsonAsync<List<Department>>("api/department");
+            designations = await Http.GetFromJsonAsync<List<Designation>>("api/designation");
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
 
-}
+    }
     public async Task CreateEmployee()
     {
-        await http.PostAsJsonAsync("api/employees", employees);
+        await Http.PostAsJsonAsync("api/employees", employees);
         uriHelper.NavigateTo("employee");
     }
 
@@ -94,6 +108,11 @@
     {
         success = true;
         StateHasChanged();
+    }
+
+    void Cancel()
+    {
+        uriHelper.NavigateTo("employee");
     }
 
     //public async Task DepartmentDropdown()
@@ -104,5 +123,5 @@
     //        departments = result;
     //    }
     //}
-    
+
 }

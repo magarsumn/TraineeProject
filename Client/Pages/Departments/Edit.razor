@@ -1,0 +1,46 @@
+﻿@page "/department/edit/{departmentId:int}"
+@using HRApp.Shared.Entities
+@inject HttpClient http
+@inject NavigationManager uriHelper
+@inject IJSRuntime js
+
+<h3>Edit Department</h3>
+<EditForm Model="@department" OnValidSubmit="OnValidSubmit">
+<DataAnnotationsValidator/>
+    <MuForm class="d-flex">
+        <MudGrid>
+            <MudItem xs="12" sm="6" >
+                <MudTextField Margin="Margin.Dense"style="height:41px" @bind-Value="department.Name" For="@(() => department.Name)" Label="Name" Variant="Variant.Outlined"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" sm="6" >
+                <MudTextField Margin="Margin.Dense"style="height:41px" @bind-Value="department.Description" For="@(() => department.Description)" Label="Address" Variant="Variant.Outlined"></MudTextField>
+            </MudItem>
+         </MudGrid>
+    </MuForm>
+    <div class="d-flex justify-space-between my-3 ">
+        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" OnClick="EditDepartment">Update</MudButton>
+    </div>
+</EditForm>
+
+@code {
+    bool success;
+    [Parameter] public int departmentId { get; set; }
+    Department department = new Department();
+    protected async override Task OnParametersSetAsync()
+    {
+        department = await http.GetFromJsonAsync<Department>($"api/department/{departmentId}");
+    }
+    async Task EditDepartment()
+    {
+        await http.PutAsJsonAsync("api/department", department);
+        await js.InvokeVoidAsync("alert", $"Updated Successfully!");
+        uriHelper.NavigateTo("department");
+    }
+    
+    private void OnValidSubmit(EditContext context)
+    {
+        success = true;
+        StateHasChanged();
+    }
+
+}

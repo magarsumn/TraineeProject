@@ -10,5 +10,6 @@ namespace HRApp.Server.Repository
 
     public interface IRepository<T> : IRepositoryWithTypedId<T, int> where T : IEntityWithTypedId<int>
     {
+        IEnumerable<object> GroupBy(Func<object, object> p);
     }
 }

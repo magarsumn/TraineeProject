@@ -4,14 +4,11 @@
 @inject NavigationManager uriHelper
 @inject IJSRuntime js
 
-<MudCard Class="mx-5 my-5">
-    <MudCardHeader>
-    <CardHeaderContent>
-        <MudText Typo="Typo.h6">Employees List</MudText>
-    </CardHeaderContent>
-</MudCardHeader>
-<MudButton Variant="Variant.Outlined" Color="Color.Primary" Link="/employee/create" >Create</MudButton>
-<br>
+
+<h3>Employees List</h3>
+<MudButton Variant="Variant.Outlined" Color="Color.Primary" Link="/employee/create">Create</MudButton>
+<br />
+<br />
 <MudTable Items="@employees.Take(10)" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading" LoadingProgressColor="Color.Info">
     <HeaderContent>
         <MudTh>Employee Name </MudTh>
@@ -26,38 +23,67 @@
         <MudTd DataLabel="Name">@context.Name</MudTd>
         <MudTd DataLabel="Address">@context.Gender</MudTd>
         <MudTd DataLabel="Email">@context.Email</MudTd>
-        <MudTd DataLabel="Department">@context.DepartmentId</MudTd>
-        <MudTd DataLabel="Designation">@context.DesignationId</MudTd>
+        <MudTd DataLabel="Department">
+            <table>
+                @foreach (var department in departments)
+                {
+                    @if (@context.DepartmentId == @department.Id)
+                    {
+                        <tr>
+                            <td> @department.Name</td>
+                        </tr>
+                    }
+                }
+            </table>
+        </MudTd>
+        <MudTd DataLabel="Designation">
+            <table>
+                @foreach (var designation in designations)
+                {
+                    @if (@context.DesignationId == @designation.Id)
+                    {
+                        <tr>
+                            <td> @designation.Name</td>
+                        </tr>
+                    }
+                }
+            </table>
+        </MudTd>
         <MudTd DataLabel="Hire Date">@context.HireDate</MudTd>
         <MudTd DataLabel="" Class="justify-end">
-            <a class="btn btn-success " href="employee/edit/@context.Id">Edit</a>
-            @*<MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Edit" Color="Color.Success" href="/user/edit/@context.Id"></MudButton>*@
-            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error"@onclick="@(() => Delete(@context.Id))"></MudButton>
-
-           @* <MudFab @onclick="@(()=>Edit(@context.Id))" Color="Color.Primary" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" IconSize="Size.Small" />
+            @*<a class="btn btn-success " href="employee/edit/@context.Id">Edit</a>
+                <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Edit" Color="Color.Success" href="/user/edit/@context.Id"></MudButton>
+                <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error"@onclick="@(() => Delete(@context.Id))"></MudButton>
+            *@
+            <MudFab @onclick="@(()=>Edit(@context.Id))" Color="Color.Primary" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" IconSize="Size.Small" />
             <MudFab @onclick="@(()=>Delete(@context.Id))" Color="Color.Secondary" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" IconSize="Size.Small" />
-*@
+
         </MudTd>
     </RowTemplate>
 </MudTable>
 
 <MudSwitch @bind-Checked="_hidePosition">Hide <b>position</b> when Breakpoint=Xs</MudSwitch>
 <MudSwitch @bind-Checked="_loading">Show Loading</MudSwitch>
-</MudCard>
 
-@code { 
+
+@code {
+
     private bool _hidePosition;
     private bool _loading;
     private IEnumerable<Employees> employees = new List<Employees>();
+    private List<Department> departments = new();
+    private List<Designation> designations = new();
 
     protected override async Task OnInitializedAsync()
     {
         employees = await client.GetFromJsonAsync<List<Employees>>("api/employees");
+        departments = await client.GetFromJsonAsync<List<Department>>("api/Department");
+        designations = await client.GetFromJsonAsync<List<Designation>>("api/Designation");
     }
-    
+
     async Task Delete(int userId)
     {
-        
+
         var emp = employees.First(x => x.Id == userId);
         if (await js.InvokeAsync<bool>("confirm", $"Do you want to delete {emp.Name}'s ({emp.Id}) Record?"))
         {
@@ -65,5 +91,9 @@
             uriHelper.NavigateTo("employee");
             await OnInitializedAsync();
         }
+    }
+    void Edit(int userId)
+    {
+        uriHelper.NavigateTo($"employee/edit/{userId}");
     }
 }

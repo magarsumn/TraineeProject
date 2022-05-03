@@ -13,7 +13,7 @@ namespace WebAssembly.Shared.Models.Dto
         public string Address { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }
-        public Gender Gender { get; set; }
+        public Sex Gender { get; set; }
         public decimal Salary { get; set; }
         public DateTime HireDate { get; set; }
         public int DepartmentId { get; set; }

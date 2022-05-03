@@ -1,0 +1,56 @@
+﻿@page "/designation/edit/{designationId:int}"
+@using HRApp.Shared.Entities
+@inject HttpClient http
+@inject NavigationManager uriHelper
+@inject IJSRuntime js
+
+<h3>Edit Designation</h3>
+<EditForm Model="@designation" OnValidSubmit="OnValidSubmit">
+<DataAnnotationsValidator/>
+<MuForm class="d-flex">
+        <MudGrid>
+            <MudItem xs="12" sm="12" >
+                <MudTextField Margin="Margin.Dense"style="height:41px" @bind-Value="designation.Name" For="@(() => designation.Name)" Label="Name" Variant="Variant.Outlined"></MudTextField>
+            </MudItem> 
+            <MudItem xs="6" sm="3">
+                <MudSelect Margin="Margin.Dense" T="int" @bind-Value="designation.DepartmentId" Label="Department" Variant="Variant.Outlined">
+                    @foreach (var item in departments)
+                    {
+                        <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="12" sm="12" >
+                <MudTextField Margin="Margin.Dense"style="height:41px" @bind-Value="designation.Description" For="@(() => designation.Description)" Label="Description" Variant="Variant.Outlined"></MudTextField>
+            </MudItem>
+         </MudGrid>
+    </MuForm>
+    <div class="d-flex justify-space-between my-3 ">
+        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" OnClick="EditDesignation">Update</MudButton>
+    </div>
+</EditForm>
+
+@code {
+    bool success;
+    [Parameter] public int designationId { get; set; }
+    Designation designation = new Designation();
+    List<Department> departments = new();
+    protected async override Task OnParametersSetAsync()
+    {
+        designation = await http.GetFromJsonAsync<Designation>($"api/designation/{designationId}");
+        departments = await http.GetFromJsonAsync<List<Department>>("api/department");
+    }
+    async Task EditDesignation()
+    {
+        await http.PutAsJsonAsync("api/designation", designation);
+        await js.InvokeVoidAsync("alert", $"Updated Successfully!");
+        uriHelper.NavigateTo("designation");
+    }
+    
+    private void OnValidSubmit(EditContext context)
+    {
+        success = true;
+        StateHasChanged();
+    }
+
+}

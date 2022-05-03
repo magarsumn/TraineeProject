@@ -10,7 +10,7 @@ namespace HRApp.Server.Models
         public string Address { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }
-        public Gender Gender { get; set; }
+        public Sex Gender { get; set; }
         //public byte[] Photo { get; set; }
         public decimal Salary { get; set; }
         public DateTime? HireDate { get; set; }
@@ -23,10 +23,10 @@ namespace HRApp.Server.Models
         public virtual Designation? DesignationFk { get; set; }
     }
 
-    public enum Gender
+    public enum Sex
     {
-        Male=1,
-        Female=2,
-        Others=3,
+        Male,
+        Female,
+        Others,
     }
 }

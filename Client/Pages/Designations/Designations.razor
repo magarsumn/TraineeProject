@@ -3,11 +3,12 @@
 @inject HttpClient client
 @inject NavigationManager uriHelper
 @inject IJSRuntime js
+
+
 <h3>Designation</h3>
-
-
 <MudButton Variant="Variant.Outlined" Color="Color.Primary" Link="/designation/create" >Create</MudButton>
-<br>
+<br />
+<br />
 <MudTable Items="@designations.Take(10)" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading" LoadingProgressColor="Color.Info">
     <HeaderContent>
         @*<MudTh>SN</MudTh>*@
@@ -22,13 +23,9 @@
        <MudTd DataLabel="Department">@context.DepartmentId</MudTd>
        <MudTd DataLabel="Description">@context.Description</MudTd>
         <MudTd DataLabel="" Class="justify-end">
-            <a class="btn btn-success " href="designation/edit/@context.Id">Edit</a>
-            @*<MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Edit" Color="Color.Success" href="/user/edit/@context.Id"></MudButton>*@
-            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error"@onclick="@(() => Delete(@context.Id))"></MudButton>
-
-            @* <MudFab @onclick="@(()=>Edit(@context.Id))" Color="Color.Primary" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" IconSize="Size.Small" />
+            <MudFab @onclick="@(()=>Edit(@context.Id))" Color="Color.Primary" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" IconSize="Size.Small" />
             <MudFab @onclick="@(()=>Delete(@context.Id))" Color="Color.Secondary" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" IconSize="Size.Small" />
-*@
+
         </MudTd>
     </RowTemplate>
 </MudTable>
@@ -56,5 +53,10 @@
             uriHelper.NavigateTo("designation");
             await OnInitializedAsync();
         }
+    }
+
+     void Edit(int userId)
+    {
+        uriHelper.NavigateTo($"department/edit/{userId}");
     }
 }

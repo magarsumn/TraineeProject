@@ -1,20 +1,27 @@
 ﻿@inherits LayoutComponentBase
-<MudThemeProvider/>
-<MudDialogProvider/>
-<MudSnackbarProvider/>
+
+<MudThemeProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
 <MudLayout>
     <MudAppBar>
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-        HRApp
-        <div class="top-row bg-transparent text-white d-flex justify-space-between  ">
+            HR App
+            <MudSpacer />
             <LoginDisplay />
-        </div>
+        
+
+
     </MudAppBar>
     <MudDrawer @bind-Open="@_drawerOpen">
-        <NavMenu/>
+        <NavMenu />
     </MudDrawer>
     <MudMainContent>
-        @Body
+        <MudContainer MaxWidth="MaxWidth.ExtraLarge">
+            <br />
+            @Body
+        </MudContainer>
     </MudMainContent>
 </MudLayout>
 @code {

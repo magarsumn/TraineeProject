@@ -1,0 +1,64 @@
+﻿@page "/designation/create"
+@using HRApp.Shared.Entities
+@inject HttpClient Http
+@inject NavigationManager uriHelper
+@inject IJSRuntime js
+
+<h3>Create Designation</h3>
+
+
+<EditForm Model="@designation" OnValidSubmit="OnValidSubmit">
+<DataAnnotationsValidator/>
+<MuForm class="d-flex">
+        <MudGrid>
+            <MudItem xs="12" sm="6" >
+                <MudTextField Margin="Margin.Dense"style="height:41px" @bind-Value="designation.Name" For="@(() => designation.Name)" Label="Name" Variant="Variant.Outlined"></MudTextField>
+            </MudItem> 
+            <MudItem xs="12" sm="6">
+                <MudSelect Margin="Margin.Dense" T="int" @bind-Value="designation.DepartmentId" Label="Department" Variant="Variant.Outlined">
+                   <MudSelectItem Value="0">--Select Department--</MudSelectItem>
+                    @foreach (var item in departments)
+                    {
+                        <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="12" sm="12" >
+                <MudTextField Margin="Margin.Dense"style="height:41px" @bind-Value="designation.Description" For="@(() => designation.Description)" Label="Description" Variant="Variant.Outlined"></MudTextField>
+            </MudItem>
+         </MudGrid>
+    </MuForm>
+    <br/>
+    <br/>
+        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" OnClick="CreateDesignation">Create</MudButton>
+        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Outlined" Color="Color.Primary" OnClick="Cancel">Cancel</MudButton>
+</EditForm>
+
+
+@code {
+    bool success;
+    Designation designation = new Designation();
+    List<Department> departments = new();
+     protected override async Task OnInitializedAsync()
+    {
+                    departments = await Http.GetFromJsonAsync<List<Department>>("api/department");
+                    
+               
+    }
+    async Task CreateDesignation()
+    {
+        await Http.PostAsJsonAsync("api/designation", designation);
+        uriHelper.NavigateTo("designation");
+    }
+    
+    private void OnValidSubmit(EditContext context)
+    {
+        success = true;
+        StateHasChanged();
+    }
+    
+    void Cancel()
+    {
+        uriHelper.NavigateTo("department");
+    }
+}
