@@ -1,0 +1,48 @@
+﻿@page "/attendance/create"
+@using HRApp.Shared.Entities
+@inject HttpClient http
+@inject NavigationManager uriHelper
+@inject IJSRuntime js
+
+<h3>Create Department</h3>
+
+
+
+    <MuForm class="d-flex">
+        <MudGrid>
+            <MudItem xs="12" sm="12" >
+                <MudDatePicker Label="Date" DisplayMonths="2" TitleDateFormat="dddd, dd MMMM" @bind-Date="attendance.Date"  Variant="Variant.Outlined"/>
+            </MudItem> 
+            <MudItem xs="12" sm="12" >
+                <MudTextField Margin="Margin.Dense"style="height:41px" @bind-Value="attendance.EmployeeId" For="@(() => attendance.EmployeeId)" Label="Employee" Variant="Variant.Outlined"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" sm="12" >
+                <MudTextField Margin="Margin.Dense"style="height:41px" @bind-Value="attendance.Status" For="@(() => attendance.Status)" Label="status" Variant="Variant.Outlined"></MudTextField>
+            </MudItem> 
+            <MudItem xs="12" sm="12" >
+                <MudTextField Margin="Margin.Dense"style="height:41px" @bind-Value="attendance.Remarks" For="@(() => attendance.Remarks)" Label="Remarks" Variant="Variant.Outlined"></MudTextField>
+            </MudItem>
+         </MudGrid>
+    </MuForm>
+    <br/>
+    <br/>
+        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" OnClick="CreateAttendance">Create</MudButton>
+        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Outlined" Color="Color.Primary" OnClick="Cancel">Cancel</MudButton>
+
+
+
+@code {
+    bool success;
+    Attendence attendance = new Attendence();
+    async Task CreateAttendance()
+    {
+        await http.PostAsJsonAsync("api/Attendence", attendance);
+        uriHelper.NavigateTo("attendance");
+    }
+
+    
+    void Cancel()
+    {
+        uriHelper.NavigateTo("attendance");
+    }
+}

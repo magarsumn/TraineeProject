@@ -57,7 +57,7 @@
             </div>
         </div>
         <MudItem xs="6" sm="3">
-            <MudDatePicker Label="Editable with Placeholder" Editable="true" @bind-Date="employees.HireDate" Placeholder="Select Date" Variant="Variant.Outlined" />
+            <MudDatePicker Label="Hire Date" Editable="true" @bind-Date="employees.HireDate" Placeholder="Select Date" Variant="Variant.Outlined" />
         </MudItem>
         <MudItem xs="12" sm="6">
             <MudTextField Margin="Margin.Dense" style="height:41px" @bind-Value="employees.Email" For="@(() => employees.Email)" Label="Email" Variant="Variant.Outlined"></MudTextField>
