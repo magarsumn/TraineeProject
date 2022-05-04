@@ -1,0 +1,61 @@
+﻿@page "/salary/create"
+@using HRApp.Shared.Entities
+@inject HttpClient http
+@inject NavigationManager uriHelper
+@inject IJSRuntime js
+
+<h3>Create Department</h3>
+
+
+
+    <MuForm class="d-flex">
+        <MudGrid>
+            
+            <MudItem xs="12" sm="12" >
+                <MudTextField Margin="Margin.Dense"style="height:41px" @bind-Value="salary.EmployeeId" For="@(() => salary.EmployeeId)" Label="Employee" Variant="Variant.Outlined"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" sm="12" >
+                <MudTextField Margin="Margin.Dense"style="height:41px" @bind-Value="salary.Months" For="@(() => salary.Months)" Label="Months" Variant="Variant.Outlined"></MudTextField>
+            </MudItem> 
+            <MudItem xs="12" sm="12" >
+                <MudTextField Margin="Margin.Dense"style="height:41px" @bind-Value="salary.BasicSalary" For="@(() => salary.BasicSalary)" Label="Basic Salary" Variant="Variant.Outlined"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" sm="12">
+                <MudTextField Margin="Margin.Dense"style="height: 41px" @bind-Value="salary.Bonus" For="@(() => salary.Bonus)" Label="Bonus" Variant="Variant.Outlined"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" sm="12">
+                <MudTextField Margin="Margin.Dense"style="height: 41px" @bind-Value="salary.Deduction" For="@(() => salary.Deduction)" Label="Deduction" Variant="Variant.Outlined"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" sm="12">
+                <MudTextField Margin="Margin.Dense"style="height: 41px" @bind-Value="salary.OverTime" For="@(() => salary.OverTime)" Label="Overtime" Variant="Variant.Outlined"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" sm="12">
+                <MudTextField Margin="Margin.Dense"style="height: 41px" @bind-Value="salary.NetAmount" For="@(() => salary.NetAmount)" Label="Net Amount" Variant="Variant.Outlined"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" sm="12">
+                <MudTextField Margin="Margin.Dense"style="height: 41px" @bind-Value="salary.Status" For="@(() => salary.Status)" Label="Status" Variant="Variant.Outlined"></MudTextField>
+            </MudItem>
+        </MudGrid>
+    </MuForm>
+    <br/>
+    <br/>
+        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" OnClick="CreateSalary">Create</MudButton>
+        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Outlined" Color="Color.Primary" OnClick="Cancel">Cancel</MudButton>
+
+
+
+@code {
+    bool success;
+    Salary salary = new Salary();
+    async Task CreateSalary()
+    {
+        await http.PostAsJsonAsync("api/salary", salary);
+        uriHelper.NavigateTo("salary");
+    }
+
+    
+    void Cancel()
+    {
+        uriHelper.NavigateTo("salary");
+    }
+}

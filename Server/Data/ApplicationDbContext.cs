@@ -18,6 +18,10 @@ namespace HRApp.Server.Data
         public DbSet<Employees> Employees { get; set; }
         public DbSet<Department> Departments { get; set; }
         public DbSet<Designation> Designations { get; set; }
+        public DbSet<Salary> Salaries { get; set; }
+        public DbSet<Overtime> Overtimes { get; set; }
+        public DbSet<Attendence> Attendences { get; set; }
+        public DbSet<BonusDeduction> BonusDeductions { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

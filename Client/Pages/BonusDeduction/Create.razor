@@ -1,0 +1,57 @@
+﻿@page "/bonusdecuction/create"
+@using HRApp.Shared.Entities
+@inject HttpClient http
+@inject NavigationManager uriHelper
+@inject IJSRuntime js
+
+<h3>Create Department</h3>
+
+
+<EditForm Model="@bonusDeduction" OnValidSubmit="OnValidSubmit">
+<DataAnnotationsValidator/>
+    <MuForm class="d-flex">
+        <MudGrid>
+            <MudItem xs="12" sm="12" >
+                <MudTextField Margin="Margin.Dense"style="height:41px" @bind-Value="bonusDeduction.EmployeeId" For="@(() => bonusDeduction.EmployeeId)" Label="Employee" Variant="Variant.Outlined"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" sm="12" >
+                <MudTextField Margin="Margin.Dense"style="height:41px" @bind-Value="bonusDeduction.Months" For="@(() => bonusDeduction.Months)" Label="Month" Variant="Variant.Outlined"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" sm="12" >
+                <MudTextField Margin="Margin.Dense"style="height:41px" @bind-Value="bonusDeduction.Bonus" For="@(() => bonusDeduction.Bonus)" Label="Amount" Variant="Variant.Outlined"></MudTextField>
+            </MudItem> 
+            <MudItem xs="12" sm="12" >
+                <MudTextField Margin="Margin.Dense"style="height:41px" @bind-Value="bonusDeduction.Deduction" For="@(() => bonusDeduction.Deduction)" Label="Amount" Variant="Variant.Outlined"></MudTextField>
+            </MudItem> 
+            <MudItem xs="12" sm="12" >
+                <MudTextField Margin="Margin.Dense"style="height:41px" @bind-Value="bonusDeduction.Remarks" For="@(() => bonusDeduction.Remarks)" Label="Remarks" Variant="Variant.Outlined"></MudTextField>
+            </MudItem>
+         </MudGrid>
+    </MuForm>
+    <br/>
+    <br/>
+        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" OnClick="CreateBonusDeduction">Create</MudButton>
+        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Outlined" Color="Color.Primary" OnClick="Cancel">Cancel</MudButton>
+</EditForm>
+
+
+@code {
+    bool success;
+    BonusDeduction bonusDeduction = new BonusDeduction();
+    async Task CreateBonusDeduction()
+    {
+        await http.PostAsJsonAsync("api/BonusDeduction", bonusDeduction);
+        uriHelper.NavigateTo("bonusdecuction");
+    }
+    
+    private void OnValidSubmit(EditContext context)
+    {
+        success = true;
+        StateHasChanged();
+    }
+    
+    void Cancel()
+    {
+        uriHelper.NavigateTo("bonusdecuction");
+    }
+}

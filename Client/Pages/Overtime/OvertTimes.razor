@@ -1,0 +1,60 @@
+﻿@page "/overtime"
+@using HRApp.Shared.Entities
+@inject HttpClient client
+@inject NavigationManager uriHelper
+@inject IJSRuntime js
+
+<h3>Departments</h3>
+<MudButton Variant="Variant.Outlined" Color="Color.Primary" Link="/overtime/create" >Create</MudButton>
+<br />
+<br />
+<MudTable Items="@departments.Take(10)" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading" LoadingProgressColor="Color.Info">
+    <HeaderContent>
+        <MudTh>Employee Name </MudTh>
+        <MudTh>Month </MudTh>
+        <MudTh>Amount </MudTh>
+        <MudTh>Remarks </MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Name">@context.EmployeeId</MudTd>
+        <MudTd DataLabel="Name">@context.Months</MudTd>
+        <MudTd DataLabel="Name">@context.Amount</MudTd>
+        <MudTd DataLabel="Name">@context.Remarks</MudTd>
+        <MudTd DataLabel="" Class="justify-end">
+            <MudFab @onclick="@(()=>Edit(@context.Id))" Color="Color.Primary" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" IconSize="Size.Small" />
+            <MudFab @onclick="@(()=>Delete(@context.Id))" Color="Color.Secondary" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" IconSize="Size.Small" />
+
+        </MudTd>
+    </RowTemplate>
+</MudTable>
+
+<MudSwitch @bind-Checked="_hidePosition">Hide <b>position</b> when Breakpoint=Xs</MudSwitch>
+<MudSwitch @bind-Checked="_loading">Show Loading</MudSwitch>
+@code { 
+    private bool _hidePosition;
+    private bool _loading;
+    private Overtime department = new();
+    private IEnumerable<Overtime> departments = new List<Overtime>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        departments = await client.GetFromJsonAsync<List<Overtime>>("api/overtime");
+    }
+    
+    async Task Delete(int userId)
+    {
+        
+        var dep = departments.First(x => x.Id == userId);
+        if (await js.InvokeAsync<bool>("confirm", $"Do you want to delete  Record?"))
+        {
+            await client.DeleteAsync($"api/overtime/{userId}");
+            uriHelper.NavigateTo("overtime");
+            await OnInitializedAsync();
+        }
+    }
+
+     void Edit(int userId)
+    {
+        uriHelper.NavigateTo($"overtime/edit/{userId}");
+    }
+}

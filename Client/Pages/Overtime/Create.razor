@@ -1,0 +1,54 @@
+﻿@page "/overtime/create"
+@using HRApp.Shared.Entities
+@inject HttpClient http
+@inject NavigationManager uriHelper
+@inject IJSRuntime js
+
+<h3>Create Department</h3>
+
+
+<EditForm Model="@overtime" OnValidSubmit="OnValidSubmit">
+<DataAnnotationsValidator/>
+    <MuForm class="d-flex">
+        <MudGrid>
+            <MudItem xs="12" sm="12" >
+                <MudTextField Margin="Margin.Dense"style="height:41px" @bind-Value="overtime.EmployeeId" For="@(() => overtime.EmployeeId)" Label="Employee" Variant="Variant.Outlined"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" sm="12" >
+                <MudTextField Margin="Margin.Dense"style="height:41px" @bind-Value="overtime.Months" For="@(() => overtime.Months)" Label="Month" Variant="Variant.Outlined"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" sm="12" >
+                <MudTextField Margin="Margin.Dense"style="height:41px" @bind-Value="overtime.Amount" For="@(() => overtime.Amount)" Label="Amount" Variant="Variant.Outlined"></MudTextField>
+            </MudItem> 
+            <MudItem xs="12" sm="12" >
+                <MudTextField Margin="Margin.Dense"style="height:41px" @bind-Value="overtime.Remarks" For="@(() => overtime.Remarks)" Label="Remarks" Variant="Variant.Outlined"></MudTextField>
+            </MudItem>
+         </MudGrid>
+    </MuForm>
+    <br/>
+    <br/>
+        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" OnClick="CreateOvertime">Create</MudButton>
+        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Outlined" Color="Color.Primary" OnClick="Cancel">Cancel</MudButton>
+</EditForm>
+
+
+@code {
+    bool success;
+    Overtime overtime = new Overtime();
+    async Task CreateOvertime()
+    {
+        await http.PostAsJsonAsync("api/overtime", overtime);
+        uriHelper.NavigateTo("overtime");
+    }
+    
+    private void OnValidSubmit(EditContext context)
+    {
+        success = true;
+        StateHasChanged();
+    }
+    
+    void Cancel()
+    {
+        uriHelper.NavigateTo("overtime");
+    }
+}
